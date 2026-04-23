@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --card: #f8f9fa;
+    --text-primary: #000000;
+    --text-secondary: #6b7280;
+  }
+
+  .dark {
+    --background: #121212;
+    --card: #1E1E1E;
+    --text-primary: #FFFFFF;
+    --text-secondary: #B0B0B0;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-text-primary;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-4xl transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-4xl transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-card rounded-4xl shadow-lg p-6 transition-all duration-200 hover:shadow-xl;
+  }
+
+  .event-blue {
+    @apply bg-blue-500 text-white;
+  }
+
+  .event-purple {
+    @apply bg-purple-500 text-white;
+  }
+
+  .event-green {
+    @apply bg-green-500 text-white;
+  }
+
+  .event-orange {
+    @apply bg-orange-500 text-white;
+  }
+}
