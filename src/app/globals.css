@@ -17,10 +17,6 @@
     --text-secondary: #B0B0B0;
   }
 
-  * {
-    @apply border-border;
-  }
-
   body {
     @apply bg-background text-text-primary;
     font-feature-settings: "rlig" 1, "calt" 1;
