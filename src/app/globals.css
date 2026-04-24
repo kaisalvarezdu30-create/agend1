@@ -3,52 +3,90 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: #ffffff;
-    --card: #f8f9fa;
-    --text-primary: #000000;
-    --text-secondary: #6b7280;
-  }
-
-  .dark {
-    --background: #121212;
-    --card: #1E1E1E;
-    --text-primary: #FFFFFF;
-    --text-secondary: #B0B0B0;
+  html {
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
-    @apply bg-background text-text-primary;
+    @apply bg-background text-text-primary font-sans antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 10% -10%, rgba(22, 163, 74, 0.18), transparent 60%),
+      radial-gradient(ellipse 70% 60% at 100% 0%, rgba(59, 130, 246, 0.12), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 50% 120%, rgba(245, 158, 11, 0.10), transparent 60%);
+    min-height: 100vh;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  h1, h2, h3, h4 {
+    @apply font-heading tracking-tight;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: #0B1020; }
+  ::-webkit-scrollbar-thumb { background: #2A3566; border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3B4680; }
 }
 
 @layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-2xl px-4 py-2.5 transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background;
+  }
+
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-4xl transition-colors duration-200;
+    @apply btn bg-pitch-gradient text-white shadow-glow-pitch hover:brightness-110 focus:ring-pitch;
+  }
+
+  .btn-ball {
+    @apply btn bg-ball-gradient text-black shadow-glow-ball hover:brightness-110 focus:ring-ball;
   }
 
   .btn-secondary {
-    @apply bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-4xl transition-colors duration-200;
+    @apply btn bg-card-2 text-text-primary border border-border hover:bg-border focus:ring-sport;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-text-primary hover:bg-card-2 focus:ring-sport;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold bg-card-2 border border-border text-text-primary;
   }
 
   .card {
-    @apply bg-card rounded-4xl shadow-lg p-6 transition-all duration-200 hover:shadow-xl;
+    @apply bg-card/90 backdrop-blur-sm border border-border rounded-4xl shadow-soft p-4 sm:p-6;
   }
 
-  .event-blue {
-    @apply bg-blue-500 text-white;
+  .card-hero {
+    @apply relative overflow-hidden rounded-5xl border border-border shadow-soft bg-hero-gradient p-5 sm:p-7;
   }
 
-  .event-purple {
-    @apply bg-purple-500 text-white;
+  /* Event color variants */
+  .event-green { @apply bg-gradient-to-r from-green-600 to-emerald-500 text-white; }
+  .event-orange { @apply bg-gradient-to-r from-orange-500 to-amber-400 text-black; }
+  .event-blue { @apply bg-gradient-to-r from-blue-600 to-sky-500 text-white; }
+  .event-purple { @apply bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white; }
+  .event-red { @apply bg-gradient-to-r from-red-600 to-rose-500 text-white; }
+  .event-yellow { @apply bg-gradient-to-r from-yellow-400 to-amber-300 text-black; }
+
+  .input {
+    @apply w-full px-4 py-2.5 bg-surface border border-border rounded-2xl text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-pitch focus:border-transparent transition;
   }
 
-  .event-green {
-    @apply bg-green-500 text-white;
+  .label {
+    @apply block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-2;
   }
 
-  .event-orange {
-    @apply bg-orange-500 text-white;
+  /* Football pitch stripes decoration */
+  .pitch-stripes {
+    background-image: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 0 14px,
+      rgba(255, 255, 255, 0.00) 14px 28px
+    );
   }
 }

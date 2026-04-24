@@ -114,8 +114,19 @@ export default function CalendarApp() {
     }
   };
 
+  const handleAddEventClick = () => {
+    setSelectedDate(new Date());
+    setEditingEvent(null);
+    setIsModalOpen(true);
+  };
+
+  const upcomingEvents = [...events]
+    .filter((e) => new Date(`${e.date}T${e.endTime}`) >= new Date())
+    .sort((a, b) => `${a.date}T${a.startTime}`.localeCompare(`${b.date}T${b.startTime}`))
+    .slice(0, 3);
+
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
+    <main className="min-h-screen p-3 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         <CalendarHeader
           currentDate={currentDate}
@@ -124,9 +135,39 @@ export default function CalendarApp() {
           onPrevious={handlePrevious}
           onNext={handleNext}
           onToday={handleToday}
+          onAddEvent={handleAddEventClick}
         />
 
-        {renderCalendarView()}
+        {/* Upcoming events strip */}
+        {upcomingEvents.length > 0 && (
+          <section className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {upcomingEvents.map((ev) => (
+              <button
+                key={ev.id}
+                onClick={() => handleEventClick(ev)}
+                className="card text-left hover:border-pitch transition group animate-pop"
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-xl grid place-items-center text-xl event-${ev.color}`}>
+                    {getCategoryEmoji(ev.category)}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold truncate group-hover:text-pitch-light transition">{ev.title}</div>
+                    <div className="text-xs text-text-secondary">
+                      {formatPrettyDate(ev.date)} · {ev.startTime}
+                    </div>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </section>
+        )}
+
+        <div className="animate-pop">{renderCalendarView()}</div>
+
+        <footer className="mt-8 text-center text-xs text-text-secondary">
+          ⚽ Fait pour Kais · Reste concentré, donne tout sur le terrain 🔥
+        </footer>
 
         <EventModal
           isOpen={isModalOpen}
@@ -137,6 +178,21 @@ export default function CalendarApp() {
           selectedDate={selectedDate}
         />
       </div>
-    </div>
+    </main>
   );
+}
+
+function getCategoryEmoji(cat?: string) {
+  switch (cat) {
+    case 'match': return '⚽';
+    case 'training': return '🏃';
+    case 'school': return '📚';
+    case 'fun': return '🎉';
+    default: return '📌';
+  }
+}
+
+function formatPrettyDate(iso: string) {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
 }

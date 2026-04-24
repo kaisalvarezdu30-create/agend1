@@ -1,4 +1,4 @@
-import { Event } from '@/types/calendar';
+import { CATEGORY_META, Event, EventColor } from '@/types/calendar';
 import { formatTime } from '@/lib/dateUtils';
 
 interface EventCardProps {
@@ -7,48 +7,49 @@ interface EventCardProps {
   compact?: boolean;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event, onClick, compact = false }) => {
-  const getColorClasses = (color: string) => {
-    switch (color) {
-      case 'blue':
-        return 'event-blue';
-      case 'purple':
-        return 'event-purple';
-      case 'green':
-        return 'event-green';
-      case 'orange':
-        return 'event-orange';
-      default:
-        return 'event-blue';
-    }
-  };
+const COLOR_CLASSES: Record<EventColor, string> = {
+  green: 'event-green',
+  orange: 'event-orange',
+  blue: 'event-blue',
+  purple: 'event-purple',
+  red: 'event-red',
+  yellow: 'event-yellow',
+};
 
-  const handleClick = () => {
-    onClick(event);
-  };
+const EventCard: React.FC<EventCardProps> = ({ event, onClick, compact = false }) => {
+  const colorClass = COLOR_CLASSES[event.color] ?? 'event-green';
+  const emoji = event.category ? CATEGORY_META[event.category].emoji : '📌';
+  const handleClick = () => onClick(event);
 
   if (compact) {
     return (
-      <div
+      <button
         onClick={handleClick}
-        className={`${getColorClasses(event.color)} text-xs px-2 py-1 rounded cursor-pointer hover:opacity-90 transition-opacity duration-200 truncate`}
+        className={`${colorClass} w-full text-left text-[11px] sm:text-xs px-2 py-1 rounded-lg font-semibold cursor-pointer hover:brightness-110 active:scale-95 transition shadow-soft truncate flex items-center gap-1`}
         title={`${event.title} (${formatTime(event.startTime)} - ${formatTime(event.endTime)})`}
       >
-        {event.title}
-      </div>
+        <span className="shrink-0">{emoji}</span>
+        <span className="truncate">{event.title}</span>
+      </button>
     );
   }
 
   return (
-    <div
+    <button
       onClick={handleClick}
-      className={`${getColorClasses(event.color)} p-3 rounded-lg cursor-pointer hover:opacity-90 transition-all duration-200 transform hover:scale-105`}
+      className={`${colorClass} w-full text-left p-3 rounded-2xl cursor-pointer hover:brightness-110 active:scale-[0.98] transition shadow-soft`}
     >
-      <div className="font-medium text-sm mb-1 truncate">{event.title}</div>
-      <div className="text-xs opacity-90">
-        {formatTime(event.startTime)} - {formatTime(event.endTime)}
+      <div className="flex items-start gap-2">
+        <div className="text-xl leading-none">{emoji}</div>
+        <div className="min-w-0 flex-1">
+          <div className="font-bold text-sm mb-0.5 truncate">{event.title}</div>
+          <div className="text-xs opacity-90">
+            {formatTime(event.startTime)} – {formatTime(event.endTime)}
+            {event.location ? ` · ${event.location}` : ''}
+          </div>
+        </div>
       </div>
-    </div>
+    </button>
   );
 };
 

@@ -17,7 +17,7 @@ const WeekView: React.FC<WeekViewProps> = ({
 }) => {
   const weekDays = getWeekDays(currentDate);
   const hours = Array.from({ length: 24 }, (_, i) => i);
-  const weekDaysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const weekDaysShort = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
   const getEventsForDay = (date: Date) => {
     const dateStr = formatDate(date);
@@ -39,7 +39,7 @@ const WeekView: React.FC<WeekViewProps> = ({
   };
 
   return (
-    <div className="bg-card rounded-4xl shadow-lg p-6">
+    <div className="card">
       <div className="overflow-x-auto">
         <div className="min-w-[800px]">
           {/* Header */}
@@ -60,7 +60,7 @@ const WeekView: React.FC<WeekViewProps> = ({
                   onClick={() => onDateClick(date)}
                   className="mt-1 text-xs btn-primary px-2 py-1"
                 >
-                  Add
+                  ＋
                 </button>
               </div>
             ))}
@@ -86,7 +86,7 @@ const WeekView: React.FC<WeekViewProps> = ({
                   return (
                     <div
                       key={dayIndex}
-                      className="relative border-t border-gray-800 min-h-[60px]"
+                      className="relative border-t border-border/50 min-h-[60px]"
                     >
                       {hourEvents.map((event) => (
                         <div key={event.id} className="absolute inset-0 p-1">
@@ -105,8 +105,8 @@ const WeekView: React.FC<WeekViewProps> = ({
           </div>
 
           {/* All day events */}
-          <div className="mt-4 pt-4 border-t border-gray-800">
-            <div className="text-sm font-medium text-text-secondary mb-2">All day events:</div>
+          <div className="mt-4 pt-4 border-t border-border">
+            <div className="text-sm font-medium text-text-secondary mb-2">Évènements de la semaine :</div>
             {weekDays.map((date, dayIndex) => {
               const dayEvents = getEventsForDay(date);
               if (dayEvents.length === 0) return null;
@@ -114,7 +114,7 @@ const WeekView: React.FC<WeekViewProps> = ({
               return (
                 <div key={dayIndex} className="mb-2">
                   <div className="text-xs text-text-secondary mb-1">
-                    {date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                    {date.toLocaleDateString('fr-FR', { weekday: 'short', month: 'short', day: 'numeric' })}
                   </div>
                   <div className="space-y-1">
                     {dayEvents.map((event) => (
@@ -135,13 +135,14 @@ const WeekView: React.FC<WeekViewProps> = ({
 
       {/* No events message */}
       {weekDays.every(date => getEventsForDay(date).length === 0) && (
-        <div className="text-center py-12 text-text-secondary">
-          <p className="mb-4">No events scheduled for this week</p>
+        <div className="text-center py-12">
+          <div className="text-6xl mb-3 animate-bounce-soft">⚽</div>
+          <p className="mb-4 text-text-secondary">Aucun évènement cette semaine</p>
           <button
             onClick={() => onDateClick(currentDate)}
             className="btn-primary"
           >
-            Create Event
+            Créer un évènement
           </button>
         </div>
       )}

@@ -1,5 +1,5 @@
 import { Event } from '@/types/calendar';
-import { getDaysInMonth, isSameDay, isToday, formatDate } from '@/lib/dateUtils';
+import { getDaysInMonth, isToday, formatDate } from '@/lib/dateUtils';
 import EventCard from './EventCard';
 
 interface CalendarGridProps {
@@ -9,6 +9,9 @@ interface CalendarGridProps {
   onEventClick: (event: Event) => void;
 }
 
+const WEEKDAYS_FULL = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+const WEEKDAYS_SHORT = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
+
 const CalendarGrid: React.FC<CalendarGridProps> = ({
   currentDate,
   events,
@@ -16,66 +19,87 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
   onEventClick,
 }) => {
   const days = getDaysInMonth(currentDate);
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   const getEventsForDay = (date: Date) => {
     const dateStr = formatDate(date);
-    return events.filter(event => event.date === dateStr);
-  };
-
-  const handleDateClick = (date: Date) => {
-    onDateClick(date);
+    return events
+      .filter((event) => event.date === dateStr)
+      .sort((a, b) => a.startTime.localeCompare(b.startTime));
   };
 
   return (
-    <div className="bg-card rounded-4xl shadow-lg p-6">
-      <div className="grid grid-cols-7 gap-1 mb-2">
-        {weekDays.map((day) => (
+    <div className="card">
+      <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2">
+        {WEEKDAYS_FULL.map((day, i) => (
           <div
             key={day}
-            className="text-center text-sm font-medium text-text-secondary py-2"
+            className="text-center text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary py-2"
           >
-            {day}
+            <span className="hidden sm:inline">{day}</span>
+            <span className="sm:hidden">{WEEKDAYS_SHORT[i]}</span>
           </div>
         ))}
       </div>
-      
-      <div className="grid grid-cols-7 gap-1">
+
+      <div className="grid grid-cols-7 gap-1 sm:gap-2">
         {days.map((date, index) => {
           const isCurrentMonth = date.getMonth() === currentDate.getMonth();
           const isCurrentDay = isToday(date);
+          const isWeekend = date.getDay() === 0 || date.getDay() === 6;
           const dayEvents = getEventsForDay(date);
-          
+          const maxVisible = 2;
+
           return (
-            <div
+            <button
               key={index}
-              onClick={() => handleDateClick(date)}
-              className={`min-h-24 p-2 border border-gray-800 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-800 ${
-                !isCurrentMonth ? 'opacity-40' : ''
-              } ${isCurrentDay ? 'bg-blue-900 border-blue-600' : 'bg-gray-900'}`}
+              onClick={() => onDateClick(date)}
+              className={`min-h-[72px] sm:min-h-[110px] p-1.5 sm:p-2 border rounded-xl sm:rounded-2xl cursor-pointer transition text-left flex flex-col ${
+                isCurrentDay
+                  ? 'bg-pitch/15 border-pitch shadow-glow-pitch'
+                  : isWeekend
+                  ? 'bg-surface/60 border-border hover:border-pitch/50'
+                  : 'bg-surface border-border hover:border-pitch/50'
+              } ${!isCurrentMonth ? 'opacity-40' : ''}`}
             >
-              <div className={`text-sm font-medium mb-1 ${
-                isCurrentDay ? 'text-blue-400' : 'text-text-primary'
-              }`}>
-                {date.getDate()}
+              <div className="flex items-center justify-between mb-1">
+                <span
+                  className={`text-xs sm:text-sm font-bold ${
+                    isCurrentDay
+                      ? 'text-white bg-pitch-gradient rounded-full w-6 h-6 sm:w-7 sm:h-7 grid place-items-center shadow-glow-pitch'
+                      : 'text-text-primary px-1'
+                  }`}
+                >
+                  {date.getDate()}
+                </span>
+                {dayEvents.length > 0 && (
+                  <span className="hidden sm:inline text-[10px] font-semibold text-text-secondary">
+                    {dayEvents.length}
+                  </span>
+                )}
               </div>
-              
-              <div className="space-y-1">
-                {dayEvents.slice(0, 3).map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    onClick={onEventClick}
-                    compact={true}
-                  />
+
+              <div className="space-y-1 flex-1">
+                {dayEvents.slice(0, maxVisible).map((event) => (
+                  <EventCard key={event.id} event={event} onClick={onEventClick} compact />
                 ))}
-                {dayEvents.length > 3 && (
-                  <div className="text-xs text-text-secondary">
-                    +{dayEvents.length - 3} more
+                {dayEvents.length > maxVisible && (
+                  <div className="text-[10px] sm:text-xs font-semibold text-pitch-light">
+                    +{dayEvents.length - maxVisible}
+                  </div>
+                )}
+                {/* Mobile: dots if many events */}
+                {dayEvents.length > 0 && (
+                  <div className="sm:hidden flex gap-0.5 mt-auto">
+                    {dayEvents.slice(0, 3).map((e) => (
+                      <span
+                        key={e.id}
+                        className={`w-1.5 h-1.5 rounded-full event-${e.color}`}
+                      />
+                    ))}
                   </div>
                 )}
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
